@@ -21,31 +21,39 @@ test("Gameboard create 10x10 arrays on init", () => {
     expect(testBoard.attackLogArray[9][9]).toBeUndefined();
 });
 
-test("Gameboard place ship into array", () => {
+test("Gameboard place ships into array", () => {
     const testBoard = new Gameboard();
 
-    testBoard.placeShip(0, 0, 2);
-    testBoard.placeShip(9, 9, 2);
+    testBoard.placeShip(0, 0, 2, "horizontal");
+    testBoard.placeShip(3, 3, 2, "vertical");
 
     expect(testBoard.boardArray[0][0]).toBeInstanceOf(Ship);
-    expect(testBoard.boardArray[1][1]).not.toBeInstanceOf(Ship);
-    expect(testBoard.boardArray[9][9]).toBeInstanceOf(Ship);
+    expect(testBoard.boardArray[1][0]).toBeInstanceOf(Ship);
+    expect(testBoard.boardArray[3][3]).toBeInstanceOf(Ship);
+    expect(testBoard.boardArray[3][4]).toBeInstanceOf(Ship);
     expect(testBoard.shipArray.length).toBe(2);
 });
 
-test("Gameboard place multiple ships", () => {
+test("Gameboard check for collision when placing", () => {
     const testBoard = new Gameboard();
 
-    testBoard.placeShip(0, 0, 2);
+    testBoard.placeShip(0, 2, 2, "horizontal");
 
-    expect(testBoard.boardArray[0][0]).toBeInstanceOf(Ship);
-    expect(testBoard.boardArray[1][1]).not.toBeInstanceOf(Ship);
+    expect(testBoard.placeShip(1, 1, 2, "vertical")).toBe("collision");
+    expect(testBoard.shipArray.length).toBe(1);
+});
+
+test("Gameboard check if is inbound when placing", () => {
+    const testBoard = new Gameboard();
+
+    expect(testBoard.placeShip(12, 2, 2, "horizontal")).toBe("out of bounds");
+    expect(testBoard.placeShip(7, 9, 2, "vertical")).toBe("out of bounds");
 });
 
 test("Gameboard array cell contains ship", () => {
     const testBoard = new Gameboard();
 
-    testBoard.placeShip(0, 0, 2);
+    testBoard.placeShip(0, 0, 2, "horizontal");
 
     expect(testBoard.hasShip(0, 0)).toBe(true);
     expect(testBoard.hasShip(1, 1)).toBe(false);
@@ -54,21 +62,22 @@ test("Gameboard array cell contains ship", () => {
 test("Gameboard receive attack", () => {
     const testBoard = new Gameboard();
 
-    testBoard.placeShip(0, 0, 2);
+    testBoard.placeShip(0, 0, 2, "horizontal");
     testBoard.receiveAttack(0, 0);
     testBoard.receiveAttack(1, 1);
 
     expect(testBoard.boardArray[0][0].hitCounter).toBe(1);
     expect(testBoard.attackLogArray[0][0]).toBe("hit");
     expect(testBoard.attackLogArray[1][1]).toBe("miss");
+    expect(testBoard.receiveAttack(0, 0)).toBe("duplicate attack");
 });
 
 test("Gameboard has every ship sunk", () => {
     const testBoard = new Gameboard();
 
-    testBoard.placeShip(0, 0, 2);
+    testBoard.placeShip(0, 0, 2, "horizontal");
     testBoard.receiveAttack(0, 0);
-    testBoard.receiveAttack(0, 0);
+    testBoard.receiveAttack(1, 0);
 
     expect(testBoard.IsEveryShipSunk()).toBe(true);
 

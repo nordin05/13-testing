@@ -21,20 +21,53 @@ export class Gameboard {
         return array;
     }
 
-    placeShip(x, y, len) {
+    placeShip(x, y, len, dir) {
         const newShip = new Ship(len);
 
-        this.shipArray.push(newShip);
-        this.boardArray[x][y] = newShip;
+        if (this.IsInbounds(x, y, len, dir)) {
+            if (this.checkForCollision(x, y, len, dir) == false) {
+                this.shipArray.push(newShip);
+
+                for (let i = 0; i < len; i++) {
+                    if (dir === "horizontal") {
+                        this.boardArray[x + i][y] = newShip;
+                    } else if (dir === "vertical") {
+                        this.boardArray[x][y + i] = newShip;
+                    }
+                }
+            } else return "collision";
+        } else return "out of bounds";
+    }
+
+    checkForCollision(x, y, len, dir) {
+        for (let i = 0; i < len; i++) {
+            if (dir === "horizontal") {
+                if (this.boardArray[x + i][y] != null) return true;
+            } else if (dir === "vertical") {
+                if (this.boardArray[x][y + i] != null) return true;
+            }
+        }
+        return false;
+    }
+
+    IsInbounds(x, y, len, dir) {
+        if (dir === "horizontal") {
+            if (x + len - 1 > 9 || x < 0) return false;
+        } else if (dir === "vertical") {
+            if (y + len - 1 > 9 || y < 0) return false;
+        }
+        return true;
     }
 
     receiveAttack(x, y) {
-        if (this.hasShip(x, y)) {
-            this.boardArray[x][y].gotHit();
-            this.attackLogArray[x][y] = "hit";
-        } else {
-            this.attackLogArray[x][y] = "miss";
-        }
+        if (this.attackLogArray[x][y] == null) {
+            if (this.hasShip(x, y)) {
+                this.boardArray[x][y].gotHit();
+                this.attackLogArray[x][y] = "hit";
+            } else {
+                this.attackLogArray[x][y] = "miss";
+            }
+        } else return "duplicate attack";
     }
 
     hasShip(x, y) {
