@@ -1,3 +1,11 @@
+export function newPlayer(name) {
+    const board = new Gameboard();
+    return {
+        name: name,
+        board: board,
+    };
+}
+
 export class Gameboard {
     constructor() {
         this.boardArray;
@@ -7,11 +15,11 @@ export class Gameboard {
     }
 
     init() {
-        this.boardArray = this.create2DArray();
-        this.attackLogArray = this.create2DArray();
+        this.boardArray = this.#create2DArray();
+        this.attackLogArray = this.#create2DArray();
     }
 
-    create2DArray() {
+    #create2DArray() {
         const array = new Array();
 
         for (var i = 0; i < 10; i++) {
