@@ -4,6 +4,7 @@ import {
     placeShips_static,
     changeTurns,
     cpuRandomAttack,
+    generateRandomNum,
 } from "./helperFunctions.js";
 import { DivToPos, addListeners } from "./DOM.js";
 
@@ -27,26 +28,48 @@ User.board.render();
 Computer.board.render();
 addListeners(board_2);
 
-export function startRound(element) {
-    console.log(Winner);
-    if (turnQueue[0] === User && Winner === null) {
+gameInstructions.innerHTML = `${turnQueue[0].name}'s turn`;
+
+export async function startRound(element) {
+    const pos = DivToPos(element);
+    const x = pos[0];
+    const y = pos[1];
+
+    if (
+        turnQueue[0] === User &&
+        Winner === null &&
+        turnQueue[1].board.attackLogArray[x][y] == undefined
+    ) {
         if (element.parentElement == Computer.board.containerDiv) {
-            const pos = DivToPos(element);
-            turnQueue[1].board.receiveAttack(pos[0], pos[1]);
+            turnQueue[1].board.receiveAttack(x, y);
             endTurn(turnQueue);
 
+            await sleep(1);
             cpuRandomAttack(User.board);
             endTurn(turnQueue);
         }
+    } else if (
+        turnQueue[0] === User &&
+        turnQueue[1].board.attackLogArray[x][y] != undefined
+    ) {
+        gameInstructions.innerHTML = `You can't attack the same position twice!`;
     }
 }
 
 function endTurn(turnQueue) {
-    if (turnQueue[1].board.IsEveryShipSunk() === true) {
+    turnQueue[1].board.render();
+
+    if (turnQueue[1].board.IsEveryShipSunk() != true) {
+        turnQueue = changeTurns(turnQueue);
+        console.log(`${turnQueue[0].name}'s turn`);
+        gameInstructions.innerHTML = `${turnQueue[0].name}'s turn`;
+    } else {
         Winner = turnQueue[0];
         gameInstructions.innerHTML = `${Winner.name} won!`;
     }
+}
 
-    turnQueue[1].board.render();
-    turnQueue = changeTurns(turnQueue);
+async function sleep(s) {
+    const variation = generateRandomNum(1, 15) / 10;
+    return new Promise((resolve) => setTimeout(resolve, s * 1000 * variation));
 }

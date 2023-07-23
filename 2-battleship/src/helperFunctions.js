@@ -6,7 +6,7 @@ export function placeShips_static(Player) {
     Player.board.placeShip(8, 5, 4, "vertical");
 }
 
-export function cpuRandomAttack(userBoard) {
+export async function cpuRandomAttack(userBoard) {
     if (!userBoard.attackLogArray.includes(undefined)) {
         const x = generateRandomNum(0, 9);
         const y = generateRandomNum(0, 9);
@@ -26,6 +26,6 @@ export function changeTurns(turnQueue) {
     return turnQueue;
 }
 
-function generateRandomNum(min, max) {
+export function generateRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
