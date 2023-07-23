@@ -1,5 +1,7 @@
-export function newPlayer(name) {
-    const board = new Gameboard();
+import { createGrids, renderShips, renderAttackLog } from "./DOM.js";
+
+export function newPlayer(name, containerDiv) {
+    const board = new Gameboard(containerDiv);
     return {
         name: name,
         board: board,
@@ -7,16 +9,18 @@ export function newPlayer(name) {
 }
 
 export class Gameboard {
-    constructor() {
+    constructor(containerDiv) {
         this.boardArray;
         this.attackLogArray;
         this.shipArray = [];
+        this.containerDiv = containerDiv;
         this.init();
     }
 
     init() {
         this.boardArray = this.#create2DArray();
         this.attackLogArray = this.#create2DArray();
+        createGrids(this.containerDiv);
     }
 
     #create2DArray() {
@@ -94,6 +98,11 @@ export class Gameboard {
             }
         }
         return true;
+    }
+
+    render() {
+        renderShips(this.boardArray, this.containerDiv);
+        renderAttackLog(this.attackLogArray, this.containerDiv);
     }
 }
 
