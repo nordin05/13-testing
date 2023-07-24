@@ -6,7 +6,25 @@ export function placeShips_static(Player) {
     Player.board.placeShip(8, 5, 4, "vertical");
 }
 
-export async function cpuRandomAttack(userBoard) {
+export function placeShips_random(Player, shipLengths, directions) {
+    if (Player.board.shipArray.length === 5) {
+        return;
+    }
+
+    const x = generateRandomNum(0, 9);
+    const y = generateRandomNum(0, 9);
+    const shipLen = shipLengths[0];
+    const dir = directions[Math.round(Math.random())];
+
+    if (Player.board.placeShip(x, y, shipLen, dir) != true) {
+        placeShips_random(Player, shipLengths, directions);
+    } else {
+        shipLengths.shift();
+        placeShips_random(Player, shipLengths, directions);
+    }
+}
+
+export function cpuRandomAttack(userBoard) {
     if (!userBoard.attackLogArray.includes(undefined)) {
         const x = generateRandomNum(0, 9);
         const y = generateRandomNum(0, 9);

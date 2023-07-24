@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from "../Classes.js";
+import { Ship, Gameboard } from "./Classes.js";
 
 test("Ship not hit yet", () => {
     const testShip = new Ship(2);
@@ -70,6 +70,18 @@ test("Gameboard receive attack", () => {
     expect(testBoard.attackLogArray[0][0]).toBe("hit");
     expect(testBoard.attackLogArray[1][1]).toBe("miss");
     expect(testBoard.receiveAttack(0, 0)).toBe("duplicate attack");
+});
+
+test("Gameboard has any ship sunk", () => {
+    const testBoard = new Gameboard();
+
+    testBoard.placeShip(0, 0, 2, "horizontal");
+    testBoard.placeShip(6, 4, 2, "vertical");
+    testBoard.receiveAttack(0, 0);
+    testBoard.receiveAttack(1, 0);
+
+    expect(testBoard.IsAnyShipSunk()).toBeInstanceOf(Ship);
+    expect(testBoard.shipArray.length).toBe(1);
 });
 
 test("Gameboard has every ship sunk", () => {

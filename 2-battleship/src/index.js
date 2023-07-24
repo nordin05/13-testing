@@ -2,6 +2,7 @@ import "./style.css";
 import { newPlayer } from "./Classes.js";
 import {
     placeShips_static,
+    placeShips_random,
     changeTurns,
     cpuRandomAttack,
     generateRandomNum,
@@ -13,6 +14,7 @@ const board_2 = document.querySelector(".container-two");
 const gameInstructions = document.querySelector(".instructions");
 
 const shipLengths = [5, 4, 3, 3, 2];
+const directions = ["horizontal", "vertical"];
 
 const User = newPlayer("User", board_1);
 const Computer = newPlayer("Computer", board_2);
@@ -22,7 +24,7 @@ let turnQueue = [User, Computer];
 let Winner = null;
 
 placeShips_static(User);
-placeShips_static(Computer);
+placeShips_random(Computer, shipLengths, directions);
 
 User.board.render();
 Computer.board.render();
@@ -56,12 +58,16 @@ export async function startRound(element) {
     }
 }
 
-function endTurn(turnQueue) {
+async function endTurn(turnQueue) {
     turnQueue[1].board.render();
+    const sunkShip = turnQueue[1].board.IsAnyShipSunk();
+    if (sunkShip != false) {
+        gameInstructions.innerHTML = `One of ${turnQueue[0].name}'s ships has been sunk!`;
+        await sleep(1);
+    }
 
     if (turnQueue[1].board.IsEveryShipSunk() != true) {
         turnQueue = changeTurns(turnQueue);
-        console.log(`${turnQueue[0].name}'s turn`);
         gameInstructions.innerHTML = `${turnQueue[0].name}'s turn`;
     } else {
         Winner = turnQueue[0];
