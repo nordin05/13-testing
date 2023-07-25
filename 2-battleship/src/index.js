@@ -7,7 +7,7 @@ import {
     cpuRandomAttack,
     generateRandomNum,
 } from "./helperFunctions.js";
-import { DivToPos, addListeners } from "./DOM.js";
+import { DivToPos, addListeners, showAttackResult } from "./DOM.js";
 
 const board_1 = document.querySelector(".container-one");
 const board_2 = document.querySelector(".container-two");
@@ -30,7 +30,7 @@ User.board.render();
 Computer.board.render();
 addListeners(board_2);
 
-gameInstructions.innerHTML = `${turnQueue[0].name}'s turn`;
+gameInstructions.innerHTML = `${turnQueue[0].name} gets the first turn!`;
 
 export async function startRound(element) {
     const pos = DivToPos(element);
@@ -44,10 +44,19 @@ export async function startRound(element) {
     ) {
         if (element.parentElement == Computer.board.containerDiv) {
             turnQueue[1].board.receiveAttack(x, y);
+            showAttackResult(turnQueue, gameInstructions, x, y);
+            await sleep(1, 0);
             endTurn(turnQueue);
 
-            await sleep(1);
-            cpuRandomAttack(User.board);
+            await sleep(1, 0.5);
+            const attackPos = cpuRandomAttack(User.board);
+            showAttackResult(
+                turnQueue,
+                gameInstructions,
+                attackPos[0],
+                attackPos[1]
+            );
+            await sleep(1, 0);
             endTurn(turnQueue);
         }
     } else if (
@@ -59,11 +68,10 @@ export async function startRound(element) {
 }
 
 async function endTurn(turnQueue) {
-    turnQueue[1].board.render();
     const sunkShip = turnQueue[1].board.IsAnyShipSunk();
     if (sunkShip != false) {
-        gameInstructions.innerHTML = `One of ${turnQueue[0].name}'s ships has been sunk!`;
-        await sleep(1);
+        gameInstructions.innerHTML = `One of ${turnQueue[1].name}'s ships has been sunk!`;
+        await sleep(1, 0);
     }
 
     if (turnQueue[1].board.IsEveryShipSunk() != true) {
@@ -75,7 +83,10 @@ async function endTurn(turnQueue) {
     }
 }
 
-async function sleep(s) {
-    const variation = generateRandomNum(1, 15) / 10;
+async function sleep(s, error) {
+    const min = 10 - 10 * error;
+    const max = 10 + 10 * error;
+    const variation = generateRandomNum(min, max) / 10;
+
     return new Promise((resolve) => setTimeout(resolve, s * 1000 * variation));
 }

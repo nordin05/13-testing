@@ -29,7 +29,7 @@ export function renderShips(boardArray, container) {
         for (let j = 0; j < 10; j++) {
             if (boardArray[i][j] != null) {
                 const element = findCellElement(container, i, j);
-                element.style.backgroundColor = "hsl(27, 80%, 70%)";
+                element.style.backgroundColor = "hsl(204, 32%, 55%)";
             }
         }
     }
@@ -40,11 +40,19 @@ export function renderAttackLog(attackLogArray, container) {
         for (let j = 0; j < 10; j++) {
             if (attackLogArray[i][j] == "hit") {
                 const element = findCellElement(container, i, j);
-                element.style.backgroundColor = "hsl(0, 85%, 60%)";
+
+                element.style.zIndex = "1";
+                element.style.backgroundColor = "hsl(0, 57%, 66%)";
+                element.style.boxShadow =
+                    "0px 0px 20px 7px hsl(0, 84%, 66%, 40%)";
             }
             if (attackLogArray[i][j] == "miss") {
                 const element = findCellElement(container, i, j);
-                element.style.backgroundColor = "hsl(196, 82%, 74%)";
+
+                element.style.zIndex = "1";
+                element.style.backgroundColor = "hsl(205, 70%, 87%)";
+                element.style.boxShadow =
+                    "0px 0px 20px 7px hsl(213, 75%, 85%, 40%)";
             }
         }
     }
@@ -60,4 +68,13 @@ export function DivToPos(element) {
     const y = element.className.slice(8, 9);
 
     return [x, y];
+}
+
+export function showAttackResult(turnQueue, element, x, y) {
+    if (turnQueue[1].board.attackLogArray[x][y] == "hit") {
+        element.innerHTML = `One of ${turnQueue[1].name}'s ships has been hit!`;
+    } else if (turnQueue[1].board.attackLogArray[x][y] == "miss") {
+        element.innerHTML = `${turnQueue[0].name} missed!`;
+    }
+    turnQueue[1].board.render();
 }
