@@ -113,8 +113,11 @@ export class Gameboard {
         return true;
     }
 
-    render() {
+    showShips() {
         renderShips(this.boardArray, this.containerDiv);
+    }
+
+    updateBoard() {
         renderAttackLog(this.attackLogArray, this.containerDiv);
     }
 }

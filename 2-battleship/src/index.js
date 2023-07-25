@@ -26,8 +26,7 @@ let Winner = null;
 placeShips_static(User);
 placeShips_random(Computer, shipLengths, directions);
 
-User.board.render();
-Computer.board.render();
+User.board.showShips();
 addListeners(board_2);
 
 gameInstructions.innerHTML = `${turnQueue[0].name} gets the first turn!`;
@@ -80,6 +79,7 @@ async function endTurn(turnQueue) {
     } else {
         Winner = turnQueue[0];
         gameInstructions.innerHTML = `${Winner.name} won!`;
+        Computer.board.showShips();
     }
 }
 

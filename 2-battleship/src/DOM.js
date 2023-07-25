@@ -76,5 +76,5 @@ export function showAttackResult(turnQueue, element, x, y) {
     } else if (turnQueue[1].board.attackLogArray[x][y] == "miss") {
         element.innerHTML = `${turnQueue[0].name} missed!`;
     }
-    turnQueue[1].board.render();
+    turnQueue[1].board.updateBoard();
 }
