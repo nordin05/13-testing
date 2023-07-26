@@ -1,8 +1,6 @@
-# 13-testing
+# Battleship game
 
-Finished assignments for The Odin Project's Testing section.
-
-Final project: https://nordin05.github.io/13-testing/
+Live: https://nordin05.github.io/13-testing/
 
 Might add later:
 
